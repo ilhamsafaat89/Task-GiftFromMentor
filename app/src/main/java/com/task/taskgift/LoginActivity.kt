@@ -5,8 +5,8 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-
 
 class LoginActivity : AppCompatActivity() {
 
@@ -19,30 +19,14 @@ class LoginActivity : AppCompatActivity() {
         sharedPreferences = getSharedPreferences("Prefs", MODE_PRIVATE)
 
         val btnLogin = findViewById<Button>(R.id.btnLogin)
+        val etUsername = findViewById<EditText>(R.id.etUsername)
+        val etPassword = findViewById<EditText>(R.id.etPassword)
 
         btnLogin.setOnClickListener {
             if (isLoggedIn()) {
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                finish()
+                navigateToMainActivity()
             } else {
-                val etUsername = findViewById<EditText>(R.id.etUsername)
-                val etPassword = findViewById<EditText>(R.id.etPassword)
-                val btnLogin = findViewById<Button>(R.id.btnLogin)
-
-                btnLogin.setOnClickListener {
-                    val username = etUsername.text.toString()
-                    val password = etPassword.text.toString()
-
-                    if (username == "user" && password == "pass") {
-
-                        setLoggedIn(true)
-
-                        val intent = Intent(this, MainActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                    }
-                }
+                attemptLogin(etUsername.text.toString(), etPassword.text.toString())
             }
         }
     }
@@ -55,5 +39,21 @@ class LoginActivity : AppCompatActivity() {
         val editor = sharedPreferences.edit()
         editor.putBoolean("isLoggedIn", isLoggedIn)
         editor.apply()
+    }
+
+    private fun attemptLogin(username: String, password: String) {
+        if (username == "user" && password == "pass") {
+            setLoggedIn(true)
+            navigateToMainActivity()
+        }
+        else{
+            Toast.makeText(this, "Username = user\nPassword = pass", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun navigateToMainActivity() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }
